@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>WebGL Sparkler</title>
+    <style>
+        body {
+            margin: 0;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        canvas {
+            border: 1px solid black;
+            background-color: black;
+        }
+    </style>
+</head>
+
+<body>
+    <canvas id="glCanvasSpark" width="800" height="600"></canvas>
+    <br><h1>Firework</h1><br>
+    <canvas id="glCanvasFirework" width="800" height="600"></canvas>
+    <br><h1>Smoke</h1><br>
+    <canvas id="glCanvasSmoke" width="800" height="600"></canvas>
+    <br><h1>Fire</h1><br>
+    <canvas id="glCanvasFire" width="800" height="600"></canvas>
+    <!-- Вершинный шейдер для искр -->
+    <script id="vertex-shader-spark" type="x-shader/x-vertex">
+        attribute vec3 a_position;
+        uniform mat4 u_mvMatrix;
+        uniform mat4 u_pMatrix;
+        uniform vec4 u_color;
+
+        void main() {
+            gl_Position = u_pMatrix * u_mvMatrix * vec4(a_position, 1.0);
+            gl_PointSize = 32.0; // размер искры
+        }
+    </script>
+
+    <!-- Фрагментный шейдер для искр -->
+    <script id="fragment-shader-spark" type="x-shader/x-fragment">
+        precision mediump float;
+        uniform sampler2D u_texture;
+        void main() {
+            gl_FragColor = texture2D(u_texture, gl_PointCoord);
+        }
+    </script>
+
+    <!-- Вершинный шейдер для следов искр -->
+    <script id="vertex-shader-track" type="x-shader/x-vertex">
+        attribute vec3 a_position;
+        attribute vec4 a_color;
+        varying vec4 v_color;
+        uniform mat4 u_mvMatrix;
+        uniform mat4 u_pMatrix;
+        void main() {
+            v_color = a_color;
+            gl_Position = u_pMatrix * u_mvMatrix * vec4(a_position, 1.0);
+        }
+    </script>
+
+    <!-- Фрагментный шейдер для следов искр -->
+    <script id="fragment-shader-track" type="x-shader/x-fragment">
+        precision mediump float;
+        varying vec4 v_color;
+        void main() {
+            gl_FragColor = v_color;
+        }
+    </script>
+ <!-- Вершинный шейдер для искр -->
+ <script id="vertex-shader-firework" type="x-shader/x-vertex">
+    attribute vec3 a_position;
+    uniform mat4 u_mvMatrix;
+    uniform mat4 u_pMatrix;
+    uniform vec4 u_color;
+    uniform float uAttenuation;
+    varying float vAttenuation;
+
+    void main() {
+        gl_Position = u_pMatrix * u_mvMatrix * vec4(a_position, 1.0);
+        gl_PointSize = 32.0; // размер искры
+        vAttenuation = uAttenuation;
+    }
+</script>
+
+<!-- Фрагментный шейдер для искр -->
+<script id="fragment-shader-firework" type="x-shader/x-fragment">
+    precision mediump float;
+    uniform sampler2D u_texture;
+    varying float vAttenuation;
+    void main() {
+        vec4 texColor = texture2D(u_texture, gl_PointCoord);
+        gl_FragColor = vec4(texColor.rgb,texColor.a * vAttenuation);
+    }
+</script>
+
+
+<!-- Вершинный шейдер для fire -->
+<script id="vertex-shader-fire" type="x-shader/x-vertex">
+    attribute vec3 a_position;
+    uniform mat4 u_mvMatrix;
+    uniform mat4 u_pMatrix;
+    uniform vec4 a_color;
+    varying float v_color;
+
+    void main() {
+        gl_Position = u_pMatrix * u_mvMatrix * vec4(a_position, 1.0);
+        gl_PointSize = 32.0; // размер искры
+        v_color = a_color;
+    }
+</script>
+
+<!-- Фрагментный шейдер для fire -->
+<script id="fragment-shader-fire" type="x-shader/x-fragment">
+    precision mediump float;
+    uniform sampler2D u_texture;
+    varying float v_color;
+    void main() {
+        vec4 texColor = texture2D(u_texture, gl_PointCoord);
+        gl_FragColor = mix(texColor,v_color);
+    }
+</script>
+
+    <!-- <script src="https://webglfundamentals.org/webgl/resources/webgl-utils.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gl-matrix/2.8.1/gl-matrix-min.js"></script> -->
+    <script src="js/gl-matrix.js"></script>
+    <script src="js/webgl-utils.js"></script>
+    <script src="js/gl-matrix-min.js"></script>
+    <script src="spark.js" type="module"></script>
+    <script src="firework.js" type="module"></script>
+    <script src="smoke.js" type="module"></script>
+
+</body>
+
+</html>
