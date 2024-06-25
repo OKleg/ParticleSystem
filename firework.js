@@ -4,7 +4,7 @@ function Firework() {
   this.init();
 }
 var alpha = 1;
-var speedsterFire = 2;
+var speedsterFire = 1.9;
 // Количество искр
 Firework.sparksCount = 150;
 
@@ -28,7 +28,7 @@ Firework.prototype = {
     this.yMax = Math.sin(this.angle) * this.radius;
 
     // Вычисляем скорость искры (dx и dy) в зависимости от множителя
-    var multiplier = 300; //25 + Math.random() * 25;
+    var multiplier = 750; //25 + Math.random() * 25;
     this.dx = this.xMax / multiplier;
     this.dy = this.yMax / multiplier;
     this.isEnd = false;
@@ -89,6 +89,7 @@ var textureLocationFirework = gl.getUniformLocation(
   programFirework,
   "u_texture"
 );
+var colorLocationFirework = gl.getUniformLocation(programFirework, "u_color");
 var pMatrixUniformLocationFirework = gl.getUniformLocation(
   programFirework,
   "u_pMatrix"
@@ -100,10 +101,13 @@ var mvMatrixUniformLocationFirework = gl.getUniformLocation(
 var uAttenuation = gl.getUniformLocation(programFirework, "uAttenuation");
 
 // Инициализация программы следов искр
-var programTrack = webglUtils.createProgramFromScripts(gl, [
-  "vertex-shader-track",
-  "fragment-shader-track",
-]);
+var programTrack = webglUtils.createProgramFromScripts(
+  gl,
+  ["vertex-shader-track", "fragment-shader-track"],
+  null,
+  null,
+  (error) => alert(error)
+);
 var positionAttributeLocationTrack = gl.getAttribLocation(
   programTrack,
   "a_position"
@@ -122,7 +126,7 @@ var mvMatrixUniformLocationTrack = gl.getUniformLocation(
 var texture = gl.createTexture();
 var image = new Image();
 image.crossOrigin = "anonymous";
-image.src = "spark.png";
+image.src = "fireworkspark.png";
 image.addEventListener("load", function () {
   gl.bindTexture(gl.TEXTURE_2D, texture);
   gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
@@ -234,7 +238,7 @@ function drawTracks(positions, pMatrix, mvMatrix, A = 1) {
   gl.uniformMatrix4fv(mvMatrixUniformLocationTrack, false, mvMatrix);
   gl.drawArrays(gl.LINES, 0, positionsFromCenter.length / 3);
 }
-
+let ci = 1;
 function drawFireworks(positions, pMatrix, mvMatrix, A = 1) {
   // Активируем программу искр
   gl.useProgram(programFirework);
@@ -250,13 +254,13 @@ function drawFireworks(positions, pMatrix, mvMatrix, A = 1) {
     0,
     0
   );
-
+  if (ci > 0.1) ci -= 0.025 * speedsterFire;
   gl.uniformMatrix4fv(pMatrixUniformLocationFirework, false, pMatrix);
   gl.uniformMatrix4fv(mvMatrixUniformLocationFirework, false, mvMatrix);
   gl.uniform1f(uAttenuation, A);
   gl.activeTexture(gl.TEXTURE0);
   gl.bindTexture(gl.TEXTURE_2D, texture);
   gl.uniform1i(textureLocationFirework, 0);
-
+  gl.uniform4fv(colorLocationFirework, [ci, 0.0, 0.4, 0.85]);
   gl.drawArrays(gl.POINTS, 0, positions.length / 3);
 }

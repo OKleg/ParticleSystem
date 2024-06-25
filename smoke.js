@@ -1,11 +1,12 @@
 // Определяем класс искры
 function Smoke() {
   // Инициализируем искру
+
   this.init();
 }
 
 // Количество искр
-Smoke.sparksCount = 200;
+Smoke.sparksCount = 300;
 
 // Методы класса Smoke
 Smoke.prototype = {
@@ -15,24 +16,25 @@ Smoke.prototype = {
     this.timeFromCreation = performance.now();
 
     // Задаем случайное направление полета искры в градусах (от 0 до 360)
-    this.angle = Math.random() * 360;
+    this.angle = ((Math.random() * 50 + 60) * Math.PI) / 180;
 
     // Радиус - это расстояние, которое пролетит искра
-    this.radius = Math.random();
-
+    this.radius = 3;
+    this.shiftY = 1.8;
+    this.shiftX = 1.8;
     // Вычисляем максимальные координаты искры на окружности
-    this.xMax = (Math.cos(this.angle) * this.radius) / 2;
-    this.yMax = Math.sin(this.angle) * this.radius * 4;
+    this.xMax = this.shiftX + Math.cos(this.angle) * this.radius + 2;
+    this.yMax = this.shiftY + Math.sin(this.angle) * this.radius + 2;
 
     // Вычисляем скорость искры (dx и dy) в зависимости от множителя
-    var multiplier = 1000 + Math.random() * 500;
-    this.dx = (Math.sin(this.angle) * this.xMax) / multiplier;
-    this.dy = (Math.sin(this.angle) * this.yMax) / multiplier;
+    var multiplier = 5000 + Math.random() * 25000;
+    this.dx = (Math.sin(this.angle) * (this.xMax - this.shiftX)) / multiplier;
+    this.dy = (Math.sin(this.angle) * (this.yMax - this.shiftY)) / multiplier;
 
     // Для того, чтобы не все искры начинали движение из начала координат,
     // задаем каждой искре свое начальное положение
-    this.x = (this.dx * 1000) % this.xMax;
-    this.y = (this.dy * 1000) % this.yMax;
+    this.x = this.shiftX + this.dx + 0.3 * Math.random(); //2 % this.xMax;
+    this.y = this.shiftY + this.dy + 0.4 * Math.random(); //this.shiftY + ((this.dy * 100) % (this.yMax - this.shiftY));
   },
 
   // Метод для перемещения искры
@@ -44,14 +46,16 @@ Smoke.prototype = {
 
     // Вычисляем скорость искры
     var speed = timeShift;
-
+    if (this.y > this.yMax / (Math.random() * 2 + 1)) {
+      this.dx -= 0.00005;
+    }
     // Обновляем координаты искры
     this.x += this.dx * speed;
     this.y += this.dy * speed;
 
     // Если искра достигла конечной точки, перезапускаем ее
     if (
-      Math.abs(this.x) > Math.abs(this.xMax) ||
+      Math.abs(this.x - this.shiftX) > Math.abs(this.xMax) ||
       Math.abs(this.y) > Math.abs(this.yMax)
     ) {
       this.init();
@@ -60,7 +64,7 @@ Smoke.prototype = {
 };
 
 // Инициализация WebGL
-var canvas = document.getElementById("glCanvasFire");
+var canvas = document.getElementById("glCanvasSmoke");
 var gl = canvas.getContext("webgl");
 if (!gl) {
   console.error("Unable to initialize WebGL. Your browser may not support it.");
@@ -111,7 +115,7 @@ function isPowerOf2(num) {
 var texture = gl.createTexture();
 var image = new Image();
 image.crossOrigin = "anonymous";
-image.src = "spark.png";
+image.src = "Smoke1.png";
 image.addEventListener("load", function () {
   gl.bindTexture(gl.TEXTURE_2D, texture);
   gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
@@ -188,7 +192,7 @@ function drawTracks(positions, pMatrix, mvMatrix) {
   var colors = [];
   var positionsFromCenter = [];
   for (var i = 0; i < positions.length; i += 3) {
-    positionsFromCenter.push(xCord, yCord, 0);
+    positionsFromCenter.push(1.8, 1.8, 0);
     positionsFromCenter.push(positions[i], positions[i + 1], positions[i + 2]);
     colors.push(1, 1, 1);
     colors.push(0.47, 0.31, 0.24);

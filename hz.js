@@ -61,7 +61,7 @@ Firework.prototype = {
 };
 
 // Инициализация WebGL
-var canvas = document.getElementById("glCanvasFirework");
+var canvas = document.getElementById("glCanvasSix");
 
 var gl = canvas.getContext("webgl");
 if (!gl) {

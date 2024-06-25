@@ -3,7 +3,7 @@ function Spark() {
   // Инициализируем искру
   this.init();
 }
-
+const sprite_path = "spark.png";
 // Количество искр
 Spark.sparksCount = 200;
 
@@ -86,10 +86,13 @@ var mvMatrixUniformLocationSpark = gl.getUniformLocation(
 );
 
 // Инициализация программы следов искр
-var programTrack = webglUtils.createProgramFromScripts(gl, [
-  "vertex-shader-track",
-  "fragment-shader-track",
-]);
+var programTrack = webglUtils.createProgramFromScripts(
+  gl,
+  ["vertex-shader-track", "fragment-shader-track"],
+  null,
+  null,
+  (error) => alert(error)
+);
 var positionAttributeLocationTrack = gl.getAttribLocation(
   programTrack,
   "a_position"
@@ -108,7 +111,7 @@ var mvMatrixUniformLocationTrack = gl.getUniformLocation(
 var texture = gl.createTexture();
 var image = new Image();
 image.crossOrigin = "anonymous";
-image.src = "spark.png";
+image.src = sprite_path;
 image.addEventListener("load", function () {
   gl.bindTexture(gl.TEXTURE_2D, texture);
   gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
@@ -151,7 +154,7 @@ function drawScene(time) {
   var pMatrix = mat4.create();
   var mvMatrix = mat4.create();
   mat4.perspective(pMatrix, 45, canvas.width / canvas.height, 0.1, 100.0);
-  mat4.translate(mvMatrix, mvMatrix, [0, -1.0, -6.0]);
+  mat4.translate(mvMatrix, mvMatrix, [0, 0.4, -4.0]);
 
   //Вызываем смещение искр при каждой отрисовке
   for (var i = 0; i < sparks.length; i++) {
@@ -182,7 +185,7 @@ function drawTracks(positions, pMatrix, mvMatrix) {
   var colors = [];
   var positionsFromCenter = [];
   for (var i = 0; i < positions.length; i += 3) {
-    positionsFromCenter.push(xCord, yCord, 0);
+    positionsFromCenter.push(0, 0, 0);
     positionsFromCenter.push(positions[i], positions[i + 1], positions[i + 2]);
     colors.push(1, 1, 1);
     colors.push(0.47, 0.31, 0.24);

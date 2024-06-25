@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>WebGL Sparkler</title>
+    <title>WebGL Partical</title>
     <style>
         body {
             margin: 0;
@@ -16,17 +16,61 @@
             border: 1px solid black;
             background-color: black;
         }
+        #glCanvasSpark {
+             background-image: url('images/spark_back.jpg');
+        }
+        #glCanvasFirework {
+             background-image: url('images/firework_sky.jpg');
+        }
+        #glCanvasSmoke {
+             background-image: url('images/smoke.jpg');
+        }
+        #glCanvasFour {
+             background-image: url('images/akva.jpg');
+        }
+          #glCanvasSix {
+             background-image: url('images/fire.jpg');
+        } 
+        #glCanvasFive {
+             background-image: url('images/snow.jpg');
+        }
+        #glCanvasSeven {
+             background-image: url('images/rain.jpeg');
+        }
+        #glCanvasEight {
+             background-image: url('images/sakura.jpg');
+        }
+        #glCanvasNine {
+             background-image: url('images/shine2.jpg');
+        }
+        #glCanvasTen {
+             background-image: url('images/mur.jpg');
+        }
     </style>
 </head>
 
 <body>
-    <canvas id="glCanvasSpark" width="800" height="600"></canvas>
+    <canvas id="glCanvasSpark" width="800" height="600" ></canvas>
     <br><h1>Firework</h1><br>
     <canvas id="glCanvasFirework" width="800" height="600"></canvas>
     <br><h1>Smoke</h1><br>
     <canvas id="glCanvasSmoke" width="800" height="600"></canvas>
-    <br><h1>Fire</h1><br>
-    <canvas id="glCanvasFire" width="800" height="600"></canvas>
+    <br><h1>4</h1><br>
+    <canvas id="glCanvasFour" width="800" height="600"></canvas>
+    <br><h1>5</h1><br>
+    <canvas id="glCanvasFive" width="800" height="600"></canvas>
+    <br><h1>6</h1><br>
+    <canvas id="glCanvasSix" width="800" height="600"></canvas>
+    <br><h1>7</h1><br>
+    <canvas id="glCanvasSeven" width="800" height="600"></canvas>
+    <br><h1>8</h1><br>
+    <canvas id="glCanvasEight" width="800" height="600"></canvas>
+    <br><h1>9</h1><br>
+    <canvas id="glCanvasNine" width="800" height="600"></canvas>
+    <br><h1>10</h1><br>
+    <canvas id="glCanvasTen" width="800" height="600"></canvas>
+    <br><h1>11</h1><br>
+    <canvas id="glCanvasEleven" width="800" height="600"></canvas>
     <!-- Вершинный шейдер для искр -->
     <script id="vertex-shader-spark" type="x-shader/x-vertex">
         attribute vec3 a_position;
@@ -75,7 +119,6 @@
     attribute vec3 a_position;
     uniform mat4 u_mvMatrix;
     uniform mat4 u_pMatrix;
-    uniform vec4 u_color;
     uniform float uAttenuation;
     varying float vAttenuation;
 
@@ -90,9 +133,11 @@
 <script id="fragment-shader-firework" type="x-shader/x-fragment">
     precision mediump float;
     uniform sampler2D u_texture;
+    uniform vec4 u_color;
+
     varying float vAttenuation;
     void main() {
-        vec4 texColor = texture2D(u_texture, gl_PointCoord);
+        vec4 texColor = u_color* texture2D(u_texture, gl_PointCoord);
         gl_FragColor = vec4(texColor.rgb,texColor.a * vAttenuation);
     }
 </script>
@@ -132,6 +177,15 @@
     <script src="spark.js" type="module"></script>
     <script src="firework.js" type="module"></script>
     <script src="smoke.js" type="module"></script>
+    <script src="four.js" type="module"></script>
+    <script src="five.js" type="module"></script>
+    <script src="six.js" type="module"></script>
+    <script src="seven.js" type="module"></script>
+    <script src="eight.js" type="module"></script>
+    <script src="nine.js" type="module"></script>
+    <script src="ten.js" type="module"></script>
+    <script src="eleven.js" type="module"></script>
+
 
 </body>
 
